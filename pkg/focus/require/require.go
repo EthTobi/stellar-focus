@@ -530,6 +530,13 @@ func ContractOwner(t focus.TB, meta focus.Value, contractID, wantOwner string) {
 	focus.AssertContractOwner(fatal(t), meta, contractID, wantOwner)
 }
 
+// ContractInstanceOwner is focus.AssertContractInstanceOwner, stopping the test
+// on failure.
+func ContractInstanceOwner(t focus.TestingT, metaInput any, contractID, wantOwnerAddress string, opts ...focus.Option) {
+	t.Helper()
+	focus.AssertContractInstanceOwner(fatal(t), metaInput, contractID, wantOwnerAddress, opts...)
+}
+
 // ContractAuthValid is focus.AssertContractAuthValid, stopping the test on
 // failure.
 func ContractAuthValid(t focus.TB, envelope focus.Value, expectedInvoker string, expectedCall focus.ContractCall) {
@@ -712,6 +719,20 @@ func ClaimableBalanceCreated(t focus.TB, meta, claimant focus.Value, amount int6
 	focus.AssertClaimableBalanceCreated(fatal(t), meta, claimant, amount)
 }
 
+// ClaimableBalanceID is focus.AssertClaimableBalanceID, stopping the test on
+// failure.
+func ClaimableBalanceID(t focus.TB, result xdr.OperationResult, wantID focus.Value, opts ...focus.Option) {
+	t.Helper()
+	focus.AssertClaimableBalanceID(fatal(t), result, wantID, opts...)
+}
+
+// ContractWasmHash is focus.AssertContractWasmHash, stopping the test on
+// failure.
+func ContractWasmHash(t focus.TB, op xdr.Operation, wantHash [32]byte, opts ...focus.Option) {
+	t.Helper()
+	focus.AssertContractWasmHash(fatal(t), op, wantHash, opts...)
+}
+
 // AccountDataEqual is focus.AssertAccountDataEqual, stopping the test on
 // failure.
 func AccountDataEqual(t focus.TB, meta focus.Value, key string, value focus.Value) {
@@ -757,6 +778,20 @@ func OfferCreated(t focus.TB, meta focus.Value, want focus.Offer) {
 func TradeExecuted(t focus.TB, value focus.Value, want focus.Trade) {
 	t.Helper()
 	focus.AssertTradeExecuted(fatal(t), value, want)
+}
+
+// TradeVolume is focus.AssertTradeVolume, stopping the test on failure.
+func TradeVolume(
+	t focus.TestingT,
+	resultInput any,
+	sellerAccount string,
+	soldAsset, boughtAsset string,
+	wantSoldAmount, wantBoughtAmount int64,
+	opts ...focus.Option,
+) {
+	t.Helper()
+	focus.AssertTradeVolume(fatal(t), resultInput, sellerAccount, soldAsset, boughtAsset,
+		wantSoldAmount, wantBoughtAmount, opts...)
 }
 
 // Snapshot is focus.AssertSnapshot, stopping the test on failure.
