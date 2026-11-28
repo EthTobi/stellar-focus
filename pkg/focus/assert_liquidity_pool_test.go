@@ -12,16 +12,18 @@ import (
 )
 
 // withdrawOp builds a LiquidityPoolWithdrawOp operation for pool id of 70
-// shares (the only value these tests ever need) and the given minimums.
-func withdrawOp(id xdr.PoolId, minA, minB int64) xdr.Operation {
+// shares and minimums of 100/200 — the only values these tests ever need.
+// Mismatches are exercised by varying AssertLiquidityPoolWithdraw's own
+// arguments against this fixed operation, not by varying the operation.
+func withdrawOp(id xdr.PoolId) xdr.Operation {
 	return xdr.Operation{
 		Body: xdr.OperationBody{
 			Type: xdr.OperationTypeLiquidityPoolWithdraw,
 			LiquidityPoolWithdrawOp: &xdr.LiquidityPoolWithdrawOp{
 				LiquidityPoolId: id,
 				Amount:          70,
-				MinAmountA:      xdr.Int64(minA),
-				MinAmountB:      xdr.Int64(minB),
+				MinAmountA:      100,
+				MinAmountB:      200,
 			},
 		},
 	}
@@ -31,7 +33,7 @@ func TestAssertLiquidityPoolWithdraw(t *testing.T) {
 	t.Parallel()
 
 	id := poolIDValue(0x7a)
-	op := withdrawOp(id, 100, 200)
+	op := withdrawOp(id)
 
 	tb := faketb.New()
 	if !focus.AssertLiquidityPoolWithdraw(tb, op, id, 70, 100, 200) {
@@ -57,7 +59,7 @@ func TestAssertLiquidityPoolWithdrawWrongOperationType(t *testing.T) {
 func TestAssertLiquidityPoolWithdrawWrongPool(t *testing.T) {
 	t.Parallel()
 
-	op := withdrawOp(poolIDValue(0x7a), 100, 200)
+	op := withdrawOp(poolIDValue(0x7a))
 
 	tb := faketb.New()
 	if focus.AssertLiquidityPoolWithdraw(tb, op, poolIDValue(0x7b), 70, 100, 200) {
@@ -72,7 +74,7 @@ func TestAssertLiquidityPoolWithdrawMismatchedAmounts(t *testing.T) {
 	t.Parallel()
 
 	id := poolIDValue(0x7a)
-	op := withdrawOp(id, 100, 200)
+	op := withdrawOp(id)
 
 	tests := []struct {
 		name               string
@@ -102,7 +104,7 @@ func TestRequireLiquidityPoolWithdraw(t *testing.T) {
 	t.Parallel()
 
 	id := poolIDValue(0x7a)
-	op := withdrawOp(id, 100, 200)
+	op := withdrawOp(id)
 
 	tb := faketb.New()
 	require.LiquidityPoolWithdraw(tb, op, id, 70, 100, 200)
